@@ -153,25 +153,28 @@ def nsga2(population, max_gen, data_x, data_y, X_test, y_test):
                 crowding_distance(objective1_values[:], objective2_values[:], non_dominated_sorted_solution[i][:]))
         solution2 = solution[:]
 
-        while (len(solution2) != 2 * population):
+        while (len(solution2) < 2 * population):
             a1 = random.randint(0, population - 1)
             b1 = random.randint(0, population - 1)
-            solution2.append(crossover(solution[a1], solution[b1]))
+            c1,c2 = crossover(solution[a1], solution[b1])
+            solution2.append(c1)
+            solution2.append(c2)
+
         objective1_values2 = [
             objective1(
-                data_x[:, np.array(solution[c]).nonzero()[0]],
+                data_x[:, np.array(solution2[c]).nonzero()[0]],
                 data_y,
-                X_test[:, np.array(solution[c]).nonzero()[0]],
+                X_test[:, np.array(solution2[c]).nonzero()[0]],
                 y_test
-            ) for c, column in enumerate(range(2 * len(solution)))
+            ) for c, column in enumerate(range(2 * population))
         ]
         objective2_values2 = [
             objective2(
-                data_x[:, np.array(solution[c]).nonzero()[0]],
+                data_x[:, np.array(solution2[c]).nonzero()[0]],
                 data_y,
-                X_test[:, np.array(solution[c]).nonzero()[0]],
+                X_test[:, np.array(solution2[c]).nonzero()[0]],
                 y_test
-            ) for c, column in enumerate(range(2 * len(solution)))
+            ) for c, column in enumerate(range(2 * population))
         ]
         non_dominated_sorted_solution2 = non_dominated_sorting_algorithm(objective1_values2[:], objective2_values2[:])
         crowding_distance_values2 = []
@@ -207,8 +210,6 @@ def non_dominating_curve_plotter(objective1_values, objective2_values):
 
 population = 25
 max_gen = 501
-min_value= -100
-max_value= 100
 mutation_rate = 0.3
 
 ds_name = ["hydraulic"]#["hydraulic","AI4I*","AI4I**"]#"azure"]
