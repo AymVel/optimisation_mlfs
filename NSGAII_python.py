@@ -205,16 +205,14 @@ def nsga2(population, max_gen, data_x, data_y, X_test, y_test):
         gen_no = gen_no + 1
     return [objective1_values, objective2_values]
 
-def non_dominating_curve_plotter(objective1_values, objective2_values):
+def non_dominating_curve_plotter(objective1, objective2):
     plt.figure(figsize=(15,8))
-    objective1 = [i * -1 for i in objective1_values]
-    objective2 = [j * -1 for j in objective2_values]
     plt.xlabel('Haming loss', fontsize=15)
     plt.ylabel('Accuracy', fontsize=15)
     plt.scatter(objective1, objective2, c='red', s=25)
 
 population = 25
-max_gen = 200
+max_gen = 20
 mutation_rate = 0.3
 
 ds_name = ["hydraulic"]#["hydraulic","AI4I*","AI4I**"]#"azure"]
