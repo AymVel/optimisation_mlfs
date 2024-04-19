@@ -123,7 +123,7 @@ def objective2(X_train,y_train,X_test,y_test):
     clf = SVM_train(X_train, y_train)
     prediction = clf.predict(X_test)
     accuracy = accuracy_score(y_true=y_test,y_pred=prediction)
-    return accuracy
+    return -accuracy
 
 
 def nsga2(population, max_gen, data_x, data_y, X_test, y_test):
@@ -205,11 +205,13 @@ def nsga2(population, max_gen, data_x, data_y, X_test, y_test):
         gen_no = gen_no + 1
     return [objective1_values, objective2_values]
 
-def non_dominating_curve_plotter(objective1, objective2):
+def non_dominating_curve_plotter(objective1_values, objective2_values):
     plt.figure(figsize=(15,8))
-    plt.xlabel('Haming loss', fontsize=15)
-    plt.ylabel('Accuracy', fontsize=15)
-    plt.scatter(objective1, objective2, c='red', s=25)
+    objective1 = [i * 1 for i in objective1_values]
+    objective2 = [j * -1 for j in objective2_values]
+    plt.xlabel('Accuracy', fontsize=15)
+    plt.ylabel('Haming loss', fontsize=15)
+    plt.scatter(objective2, objective1, c='red', s=25)
 
 population = 25
 max_gen = 20
