@@ -7,6 +7,7 @@ import warnings
 from sklearn.svm import SVC
 from skmultilearn.adapt import MLkNN
 import numpy as np
+import csv
 warnings.filterwarnings('ignore')
 from sklearn.metrics import hamming_loss, accuracy_score
 
@@ -40,10 +41,14 @@ def crowding_distance(values1, values2, front):
     sorted2 = sort_by_values(front, values2[:])
     distance[0] = 9999999999999999
     distance[len(front) - 1] = 9999999999999999
+    m = (max(values1) - min(values1))
+    if ((max(values1)-min(values1)) == 0):
+        m = 0.00000000000001
+
     for k in range(1,len(front)-1):
-        distance[k] = distance[k]+ (values1[sorted1[k+1]] - values2[sorted1[k-1]])/(max(values1)-min(values1))
+        distance[k] = distance[k]+ (values1[sorted1[k+1]] - values2[sorted1[k-1]])/m
     for k in range(1,len(front)-1):
-        distance[k] = distance[k]+ (values1[sorted2[k+1]] - values2[sorted2[k-1]])/(max(values2)-min(values2))
+        distance[k] = distance[k]+ (values1[sorted2[k+1]] - values2[sorted2[k-1]])/m
     return distance
 def non_dominated_sorting_algorithm(values1, values2):
     S=[[] for i in range(0,len(values1))]
@@ -204,12 +209,12 @@ def non_dominating_curve_plotter(objective1_values, objective2_values):
     plt.figure(figsize=(15,8))
     objective1 = [i * -1 for i in objective1_values]
     objective2 = [j * -1 for j in objective2_values]
-    plt.xlabel('Objective Function 1', fontsize=15)
-    plt.ylabel('Objective Function 2', fontsize=15)
+    plt.xlabel('Haming loss', fontsize=15)
+    plt.ylabel('Accuracy', fontsize=15)
     plt.scatter(objective1, objective2, c='red', s=25)
 
 population = 25
-max_gen = 501
+max_gen = 200
 mutation_rate = 0.3
 
 ds_name = ["hydraulic"]#["hydraulic","AI4I*","AI4I**"]#"azure"]
@@ -217,9 +222,10 @@ cmd = True # when called from root project folder
 for ds in ds_name:
     print(f"Dataset = {ds}")
     X_train, X_test, y_train, y_test, class_name = select_dataset(ds_name=ds,cmd=True)
-print(X_train.shape)
-print(y_train.shape)
+
 
 objective1_values, objective2_values = nsga2(population,max_gen,X_train, y_train, X_test, y_test)
 
+
 non_dominating_curve_plotter(objective1_values, objective2_values)
+plt.show()
